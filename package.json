@@ -1,0 +1,64 @@
+{
+  "name": "DocumentIntelligenceService",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@cap-js/hana": "^2",
+    "@google/generative-ai": "^0.24.1",
+    "@sap-cloud-sdk/http-client": "^4.5.1",
+    "@sap/cds": "^9.8.4",
+    "@sap/xssec": "^4.13.0",
+    "express": "^4",
+    "form-data": "^4.0.5",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9",
+    "cds-plugin-ui5": "^0.13.0",
+    "mbt": "^1.2.29",
+    "rimraf": "^5.0.5"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-documentintelligence": "cds watch --open documentintelligence/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "undeploy": "cf undeploy DocumentIntelligenceService --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-document_intelligence": "cds watch --open documentintelligence/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-documentintelligence_ui": "cds watch --open documentintelligenceui/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-document_intelligence_ui": "cds watch --open documentintelligenceui/index.html?sap-ui-xx-viewCache=false --livereload false"
+  },
+  "private": true,
+  "cds": {
+    "requires": {
+      "destinations": true,
+      "Doc_AI": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "Doc_AI"
+        }
+      },
+      "[development]": {
+        "db": "hana"
+      },
+      "[production]": {
+        "db": "hana"
+      },
+      "auth": {
+        "kind": "xsuaa"
+      }
+    },
+    "server": {
+      "body_parser": {
+        "limit": "1000mb"
+      }
+    }
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/document_intelligence"
+  ]
+}

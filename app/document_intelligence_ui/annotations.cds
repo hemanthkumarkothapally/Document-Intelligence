@@ -1,0 +1,1 @@
+using DocumentIntelligence as service from '../../srv/DI_service';

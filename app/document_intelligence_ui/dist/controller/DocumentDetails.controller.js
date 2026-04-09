@@ -1,0 +1,2 @@
+sap.ui.define(["sap/ui/core/mvc/Controller","documentintelligenceui/controller/BaseController"],(t,e)=>{"use strict";return e.extend("documentintelligenceui.controller.DocumentDetails",{onInit(){this.getRouter().getRoute("DocumentDetails").attachPatternMatched(this._onRouteMatched,this)},_onRouteMatched:function(t){const e=t.getParameter("arguments").id;const n=this.getView();const o=this.getOwnerComponent().getModel();n.bindElement({path:`/Documents(${e})`})}})});
+//# sourceMappingURL=DocumentDetails.controller.js.map

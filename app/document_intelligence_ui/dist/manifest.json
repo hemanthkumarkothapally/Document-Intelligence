@@ -1,0 +1,141 @@
+{
+	"_version": "1.83.0",
+	"sap.app": {
+		"id": "documentintelligenceui",
+		"type": "application",
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			]
+		},
+		"applicationVersion": {
+			"version": "0.0.1"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"resources": "resources.json",
+		"sourceTemplate": {
+			"id": "@sap/generator-fiori:basic",
+			"version": "1.22.0",
+			"toolsId": "a4c70abf-3f1f-485f-9836-914a177cb0f0"
+		},
+		"dataSources": {
+			"mainService": {
+				"uri": "/odata/v4/document-intelligence/",
+				"type": "OData",
+				"settings": {
+					"annotations": [],
+					"odataVersion": "4.01"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"flexEnabled": false,
+		"dependencies": {
+			"minUI5Version": "1.146.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "documentintelligenceui.i18n.i18n",
+					"supportedLocales": [
+						""
+					]
+				}
+			},
+			"": {
+				"dataSource": "mainService",
+				"preload": true,
+				"settings": {
+					"operationMode": "Server",
+					"autoExpandSelect": true,
+					"earlyRequests": true
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"controlAggregation": "pages",
+				"controlId": "app",
+				"transition": "slide",
+				"type": "View",
+				"viewType": "XML",
+				"path": "documentintelligenceui.view",
+				"async": true,
+				"viewPath": "documentintelligenceui.view"
+			},
+			"routes": [
+				{
+					"name": "DocumentsList",
+					"pattern": ":?query:",
+					"target": [
+						"TargetDocumentsList"
+					]
+				},
+				{
+					"name": "DocumentDetails",
+					"pattern": "DocumentDetails/{id}",
+					"target": [
+						"TargetDocumentDetails"
+					]
+				}
+			],
+			"targets": {
+				"TargetDocumentDetails": {
+					"id": "DocumentDetails",
+					"name": "DocumentDetails"
+				},
+				"TargetDocumentsList": {
+					"id": "DocumentsList",
+					"name": "DocumentsList"
+				}
+			}
+		},
+		"rootView": {
+			"viewName": "documentintelligenceui.view.App",
+			"type": "XML",
+			"id": "App",
+			"async": true
+		},
+		"flexBundle": false
+	},
+	"sap.cloud": {
+		"public": true,
+		"service": "DocumentIntelligenceService"
+	}
+}

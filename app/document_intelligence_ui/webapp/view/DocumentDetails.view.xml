@@ -1,0 +1,134 @@
+<mvc:View xmlns:form="sap.ui.layout.form" controllerName="documentintelligenceui.controller.DocumentDetails"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:uxap="sap.uxap">
+
+    <uxap:ObjectPageLayout id="objectPage">
+
+        <!-- 🔷 HEADER -->
+        <uxap:headerTitle>
+            <uxap:ObjectPageDynamicHeaderTitle>
+                <uxap:heading>
+                    <Title text="{fileName}" />
+                </uxap:heading>
+
+                <uxap:actions>
+                    <Button text="Save" type="Emphasized" press=".onSave"/>
+                </uxap:actions>
+            </uxap:ObjectPageDynamicHeaderTitle>
+        </uxap:headerTitle>
+
+        <!-- 🔷 SECTIONS -->
+        <uxap:sections>
+
+            <!-- 📄 DOCUMENT SECTION -->
+            <uxap:ObjectPageSection title="Document">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                        <form:SimpleForm layout="ColumnLayout" columnsXL="2">
+                            <Label text="File Name"></Label>
+                            <Input value="{fileName}" placeholder="File Name"/>
+                            <Label text="Uploaded By"></Label>
+                            <Input value="{uploadedBy}" placeholder="Uploaded By"/>
+                            <Label text="Uploaded On"></Label>
+                            <DatePicker value="{uploadedAt}" />
+                            <Label text="Status"></Label>
+                            <Input value="{status}" />
+                            <Label text="Raw Text"></Label>
+                            <TextArea value="{rawText}" rows="5"/>
+                        </form:SimpleForm>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+
+            <!-- 🧾 INVOICE SECTION -->
+            <uxap:ObjectPageSection title="Invoice">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+                        <VBox class="sapUiSmallMargin">
+
+                            <Input value="{invoice/invoiceNumber}" placeholder="Invoice Number"/>
+                            <Input value="{invoice/vendorName}" placeholder="Vendor Name"/>
+                            <DatePicker value="{invoice/invoiceDate}" />
+                            <Input value="{invoice/totalAmount}" />
+                            <Input value="{invoice/currency}" />
+
+                        </VBox>
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+
+            <!-- 📦 LINE ITEMS SECTION -->
+            <uxap:ObjectPageSection title="Line Items">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+
+                        <Table items="{invoice/lineItems}">
+                            <columns>
+                                <Column>
+                                    <Text text="Description"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Qty"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Unit Price"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Total"/>
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Input value="{description}"/>
+                                        <Input value="{quantity}"/>
+                                        <Input value="{unitPrice}"/>
+                                        <Input value="{lineTotal}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+
+            <!-- 📜 AUDIT LOGS SECTION -->
+            <uxap:ObjectPageSection title="Audit Logs">
+                <uxap:subSections>
+                    <uxap:ObjectPageSubSection>
+
+                        <Table items="{auditLogs}">
+                            <columns>
+                                <Column>
+                                    <Text text="Action"/>
+                                </Column>
+                                <Column>
+                                    <Text text="User"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Time"/>
+                                </Column>
+                            </columns>
+
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{action}"/>
+                                        <Text text="{performedBy}"/>
+                                        <Text text="{performedAt}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+
+                    </uxap:ObjectPageSubSection>
+                </uxap:subSections>
+            </uxap:ObjectPageSection>
+
+        </uxap:sections>
+
+    </uxap:ObjectPageLayout>
+</mvc:View>
