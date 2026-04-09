@@ -4,14 +4,22 @@ sap.ui.define([
     "documentintelligenceui/controller/BaseController",
     'sap/ui/model/Filter',
     'sap/ui/model/FilterOperator',
-    "sap/ui/core/BusyIndicator"
-], (Controller, Fragment, BaseController, Filter, FilterOperator, BusyIndicator) => {
+    "sap/ui/core/BusyIndicator",
+    'sap/m/MessageToast'
+], (Controller, Fragment, BaseController, Filter, FilterOperator, BusyIndicator,MessageToast) => {
     "use strict";
 
     return BaseController.extend("documentintelligenceui.controller.DocumentsList", {
         onInit() {
             this.getRouter().getRoute("DocumentsList").attachPatternMatched(this._onRouteMatched, this)
 
+        },
+        _onRouteMatched: function (oEvent) {
+            const oLocalModel = new sap.ui.model.json.JSONModel({
+                isDelete: false
+            });
+
+            this.getView().setModel(oLocalModel, "LocalModel");
         },
         onGoBtnPress: function () {
             const oFilterBar = this.byId("idFilterBar");
@@ -50,7 +58,7 @@ sap.ui.define([
             const oFile = this.byId("idFileUploader").getFocusDomRef().files[0]
             if (!oFile) {
                 sap.m.MessageTost.Show("File is not selected")
-                 oView.setBusy(false);
+                oView.setBusy(false);
                 return;
             }
             const toBase64 = (file) => new Promise((resolve, reject) => {
@@ -105,6 +113,33 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().navTo("DocumentDetails", {
                 id: documentId
             });
+        },
+        onDocumentsSelectChange: function (oEvent) {
+            const oTable = this.byId("documentsTable");
+            const aSelectedItems = oTable.getSelectedItems();
+            this._aSelectedContexts = aSelectedItems.map(item =>
+                item.getBindingContext()
+            );
+            this.getView().getModel("LocalModel")
+                .setProperty("/isDelete", this._aSelectedContexts.length > 0);
+        },
+        onDeletePress: async function () {
+            if (!this._aSelectedContexts || this._aSelectedContexts.length === 0) {
+                MessageToast.show("No items selected");
+                return;
+            }
+            try {
+                for (let oContext of this._aSelectedContexts) {
+                    await oContext.delete("$auto");
+                }
+                MessageToast.show("Deleted successfully");
+                this.byId("documentsTable").removeSelections();
+                this.getModel("LocalModel").setProperty("/isDelete", false);
+
+            } catch (err) {
+                console.error(err);
+                MessageToast.show("Delete failed");
+            }
         }
     });
 });

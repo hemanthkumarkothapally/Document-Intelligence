@@ -1,4 +1,4 @@
-<mvc:View controllerName="documentintelligenceui.controller.DocumentDetails"
+<mvc:View xmlns:form="sap.ui.layout.form" controllerName="documentintelligenceui.controller.DocumentDetails"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:uxap="sap.uxap">
@@ -13,7 +13,10 @@
                 </uxap:heading>
 
                 <uxap:actions>
-                    <Button text="Save" type="Emphasized" press=".onSave"/>
+                    <Button text="Edit" type="Attention" visible="{= !${EditModel>/isEdit} }" press=".onEditPress"></Button>
+                    <Button text="Save" type="Emphasized" visible="{= ${EditModel>/isEdit} }" press=".onSavePress"/>
+                    <Button text="Cancel" type="Negative" visible="{= ${EditModel>/isEdit} }" press=".onCancelEditPress"></Button>
+
                 </uxap:actions>
             </uxap:ObjectPageDynamicHeaderTitle>
         </uxap:headerTitle>
@@ -25,57 +28,99 @@
             <uxap:ObjectPageSection title="Document">
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection>
-                        <VBox class="sapUiSmallMargin">
+                        <form:SimpleForm layout="ColumnLayout" columnsXL="2" columnsL="2" columnsM="1">
+                            <Label text="File Name"></Label>
+                            <Text text="{fileName}"></Text>
+                            <!-- <Input value="{fileName}" placeholder="File Name"/> -->
+                            <Label text="Uploaded By"></Label>
+                            <Text text="{uploadedBy}"></Text>
+                            <!-- <Input value="{uploadedBy}" placeholder="Uploaded By"/> -->
+                            <Label text="Uploaded On"></Label>
+                            <Text text="{uploadedAt}"></Text>
+                            <!-- <DatePicker value="{uploadedAt}" /> -->
+                            <Label text="Status"></Label>
+                            <Text text="{status}"></Text>
+                            <!-- <Input value="{status}" /> -->
+                            <Label text="Raw Text"></Label>
 
-                            <Input value="{fileName}" placeholder="File Name"/>
-                            <Input value="{uploadedBy}" placeholder="Uploaded By"/>
-                            <DatePicker value="{uploadedAt}" />
-                            <Input value="{status}" />
-
-                            <TextArea value="{rawText}" rows="5"/>
-
-                        </VBox>
+                            <TextArea value="{rawText}" enabled="false" rows="5"/>
+                        </form:SimpleForm>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>
             </uxap:ObjectPageSection>
 
-            <!-- 🧾 INVOICE SECTION -->
+            <!-- INVOICE SECTION -->
             <uxap:ObjectPageSection title="Invoice">
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection>
-                        <VBox class="sapUiSmallMargin">
-
-                            <Input value="{invoice/invoiceNumber}" placeholder="Invoice Number"/>
-                            <Input value="{invoice/vendorName}" placeholder="Vendor Name"/>
-                            <DatePicker value="{invoice/invoiceDate}" />
-                            <Input value="{invoice/totalAmount}" />
-                            <Input value="{invoice/currency}" />
-
-                        </VBox>
+                        <form:SimpleForm id="idDisplayInvoiceForm" layout="ColumnLayout" columnsXL="2" columnsL="2" columnsM="1" visible="{= !${EditModel>/isEdit} }">
+                            <Label text="Invoice Number"></Label>
+                            <Text text="{invoice/invoiceNumber}" visible="{= !${EditModel>/isEdit} }"></Text>
+                            <Label text="Vendor Name"></Label>
+                            <Text text="{invoice/vendorName}" visible="{= !${EditModel>/isEdit} }"></Text>
+                            <Label text="Invoice Date"></Label>
+                            <Text text="{invoice/invoiceDate}" visible="{= !${EditModel>/isEdit} }"></Text>
+                            <Label text="Total Amount"></Label>
+                            <Text text="{invoice/totalAmount}" visible="{= !${EditModel>/isEdit} }"></Text>
+                            <Label text="Currency"></Label>
+                            <Text text="{invoice/currency}" visible="{= !${EditModel>/isEdit} }"></Text>
+                        </form:SimpleForm>
+                        <form:SimpleForm id="idEditInvoiceForm" layout="ColumnLayout" columnsXL="2" columnsL="2" columnsM="1" visible="{= ${EditModel>/isEdit} }">
+                            <Label text="Invoice Number"></Label>
+                            <Input value="{invoice/invoiceNumber}" placeholder="Invoice Number" visible="{= ${EditModel>/isEdit} }"/>
+                            <Label text="Vendor Name"></Label>
+                            <Input value="{invoice/vendorName}" placeholder="Vendor Name" visible="{= ${EditModel>/isEdit} }"/>
+                            <Label text="Invoice Date"></Label>
+                            <DatePicker value="{invoice/invoiceDate}" visible="{= ${EditModel>/isEdit} }" />
+                            <Label text="Total Amount"></Label>
+                            <Input value="{invoice/totalAmount}" visible="{= ${EditModel>/isEdit} }" />
+                            <Label text="Currency"></Label>
+                            <Input value="{invoice/currency}" visible="{= ${EditModel>/isEdit} }"/>
+                        </form:SimpleForm>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>
             </uxap:ObjectPageSection>
 
-            <!-- 📦 LINE ITEMS SECTION -->
+            <!-- LINE ITEMS SECTION -->
             <uxap:ObjectPageSection title="Line Items">
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection>
 
                         <Table items="{invoice/lineItems}">
                             <columns>
-                                <Column><Text text="Description"/></Column>
-                                <Column><Text text="Qty"/></Column>
-                                <Column><Text text="Unit Price"/></Column>
-                                <Column><Text text="Total"/></Column>
+                                <Column>
+                                    <Text text="Description"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Qty"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Unit Price"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Total"/>
+                                </Column>
                             </columns>
 
                             <items>
                                 <ColumnListItem>
                                     <cells>
-                                        <Input value="{description}"/>
-                                        <Input value="{quantity}"/>
-                                        <Input value="{unitPrice}"/>
-                                        <Input value="{lineTotal}"/>
+                                        <HBox>
+                                            <Text text="{description}" visible="{= !${EditModel>/isEdit} }"/>
+                                            <Input value="{description}" visible="{= ${EditModel>/isEdit} }"/>
+                                        </HBox>
+                                        <HBox>
+                                            <Text text="{quantity}" visible="{= !${EditModel>/isEdit} }"/>
+                                            <Input value="{quantity}" visible="{= ${EditModel>/isEdit} }"/>
+                                        </HBox>
+                                        <HBox>
+                                            <Text text="{unitPrice}" visible="{= !${EditModel>/isEdit} }"/>
+                                            <Input value="{unitPrice}" visible="{= ${EditModel>/isEdit} }"/>
+                                        </HBox>
+                                        <HBox >
+                                            <Text text="{lineTotal}" visible="{= !${EditModel>/isEdit} }"/>
+                                            <Input value="{lineTotal}" visible="{= ${EditModel>/isEdit} }"/>
+                                        </HBox>
                                     </cells>
                                 </ColumnListItem>
                             </items>
@@ -85,16 +130,25 @@
                 </uxap:subSections>
             </uxap:ObjectPageSection>
 
-            <!-- 📜 AUDIT LOGS SECTION -->
+            <!-- AUDIT LOGS SECTION -->
             <uxap:ObjectPageSection title="Audit Logs">
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection>
 
                         <Table items="{auditLogs}">
                             <columns>
-                                <Column><Text text="Action"/></Column>
-                                <Column><Text text="User"/></Column>
-                                <Column><Text text="Time"/></Column>
+                                <Column>
+                                    <Text text="Action"/>
+                                </Column>
+                                <Column>
+                                    <Text text="User"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Time"/>
+                                </Column>
+                                <Column>
+                                    <Text text="Details"/>
+                                </Column>
                             </columns>
 
                             <items>
@@ -103,6 +157,7 @@
                                         <Text text="{action}"/>
                                         <Text text="{performedBy}"/>
                                         <Text text="{performedAt}"/>
+                                        <Text text="{path: 'details',formatter: '.formatAuditDetails'}" wrapping="true"/>
                                     </cells>
                                 </ColumnListItem>
                             </items>

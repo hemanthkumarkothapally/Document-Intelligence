@@ -5,7 +5,6 @@ service DocumentIntelligence {
     entity Documents         as projection on DIS.Documents;
     entity ExtractedInvoices as projection on DIS.ExtractedInvoices;
     entity LineItems         as projection on DIS.LineItems;
-    @readonly
     entity AuditLogs         as projection on DIS.AuditLogs;
     action processDocument(documentId : UUID) returns ExtractedInvoices;
     action uploadDocument(

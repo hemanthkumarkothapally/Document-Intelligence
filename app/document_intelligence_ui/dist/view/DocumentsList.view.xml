@@ -11,41 +11,25 @@
         <f:header>
             <f:DynamicPageHeader>
                 <f:content>
-
                     <filterbar:FilterBar id="idFilterBar" useToolbar="false" search=".onGoBtnPress">
-
                         <filterbar:filterGroupItems>
-
-                            <!-- 🔹 ID Filter -->
                             <filterbar:FilterGroupItem label="{i18n>id}" name="ID" groupName="group1" visibleInFilterBar="true">
-
                                 <filterbar:control>
                                     <Input placeholder="Enter ID"/>
                                 </filterbar:control>
-
                             </filterbar:FilterGroupItem>
-
-                            <!-- 🔹 File Name -->
                             <filterbar:FilterGroupItem label="{i18n>fileName}" name="fileName" groupName="group1" visibleInFilterBar="true">
 
                                 <filterbar:control>
                                     <Input placeholder="Enter File Name"/>
                                 </filterbar:control>
-
                             </filterbar:FilterGroupItem>
-
-                            <!-- 🔹 Uploaded By -->
                             <filterbar:FilterGroupItem label="{i18n>uploadedBy}" name="uploadedBy" groupName="group1" visibleInFilterBar="true">
-
                                 <filterbar:control>
                                     <Input placeholder="Enter User"/>
                                 </filterbar:control>
-
                             </filterbar:FilterGroupItem>
-
-                            <!-- 🔹 Status Dropdown -->
                             <filterbar:FilterGroupItem label="{i18n>status}" name="status" groupName="group1" visibleInFilterBar="true">
-
                                 <filterbar:control>
                                     <ComboBox>
                                         <core:Item key="Pending" text="Pending"/>
@@ -53,26 +37,27 @@
                                         <core:Item key="Failed" text="Failed"/>
                                     </ComboBox>
                                 </filterbar:control>
-
                             </filterbar:FilterGroupItem>
-
                         </filterbar:filterGroupItems>
-
                     </filterbar:FilterBar>
-
                 </f:content>
             </f:DynamicPageHeader>
         </f:header>
         <f:content>
-            <Table id="documentsTable" items="{/Documents}" growing="true" growingThreshold="10">
+
+            <Table id="documentsTable" items="{/Documents}" growing="true" mode="MultiSelect" selectionChange=".onDocumentsSelectChange" growingThreshold="10">
                 <headerToolbar>
                     <tnt:ToolHeader>
                         <Title text="Documents ({= ${/Documents/$count}})" />
                         <ToolbarSpacer />
                         <Button text="{i18n>uploadBtnText}" type="Accept" press=".onDocumentUploadBtnPress" />
+                        <Button text="{i18n>deleteBtnText}" visible="{LocalModel>/isDelete}" type="Critical" press=".onDeletePress" />
                     </tnt:ToolHeader>
                 </headerToolbar>
                 <columns >
+                    <Column visible="false">
+                        <Text text="{i18n>ID}"/>
+                    </Column>
                     <Column>
                         <Text text="{i18n>fileName}"/>
                     </Column>
@@ -98,6 +83,7 @@
                 <items>
                     <ColumnListItem type="Navigation" press=".onNavigationPress">
                         <cells>
+                            <Text text="{ID}" visible="false"/>
                             <Text text="{fileName}"/>
                             <Text text="{uploadedBy}"/>
                             <Text text="{uploadedAt}"/>
