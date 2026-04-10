@@ -5,8 +5,10 @@ sap.ui.define([
     'sap/ui/model/Filter',
     'sap/ui/model/FilterOperator',
     "sap/ui/core/BusyIndicator",
-    'sap/m/MessageToast'
-], (Controller, Fragment, BaseController, Filter, FilterOperator, BusyIndicator,MessageToast) => {
+    'sap/m/MessageToast',
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/model/Filter"
+], (Controller, Fragment, BaseController, Filter, FilterOperator, BusyIndicator, MessageToast,JSONModel,Filter) => {
     "use strict";
 
     return BaseController.extend("documentintelligenceui.controller.DocumentsList", {
@@ -15,7 +17,7 @@ sap.ui.define([
 
         },
         _onRouteMatched: function (oEvent) {
-            const oLocalModel = new sap.ui.model.json.JSONModel({
+            const oLocalModel = new JSONModel({
                 isDelete: false
             });
 
@@ -33,7 +35,7 @@ sap.ui.define([
                 const sValue = oControl.getValue ? oControl.getValue() : oControl.getSelectedKey();
 
                 if (sValue) {
-                    aFilters.push(new sap.ui.model.Filter(sName, "Contains", sValue));
+                    aFilters.push(new Filter(sName, "Contains", sValue));
                 }
             });
 
@@ -57,7 +59,7 @@ sap.ui.define([
             debugger
             const oFile = this.byId("idFileUploader").getFocusDomRef().files[0]
             if (!oFile) {
-                sap.m.MessageTost.Show("File is not selected")
+                MessageTost.Show("File is not selected")
                 oView.setBusy(false);
                 return;
             }
@@ -82,7 +84,7 @@ sap.ui.define([
                 await oAction.execute();
                 const oResponse = oAction.getBoundContext().getObject();
                 console.log("Response:", oResponse);
-                sap.m.MessageToast.show("Upload successful");
+                MessageToast.show("Upload successful");
                 const documentId = oResponse.ID; // ✅ IMPORTANT
 
                 // 🔹 2. Call processDocument
@@ -90,12 +92,12 @@ sap.ui.define([
                     .setParameter("documentId", documentId)
                     .execute();
 
-                sap.m.MessageToast.show("Processing started");
+                MessageToast.show("Processing started");
                 this.getView().getModel().refresh();
 
             } catch (err) {
                 console.error(err);
-                sap.m.MessageToast.show("Upload failed");
+                MessageToast.show("Upload failed");
             }
             oView.setBusy(false);
         },
@@ -140,6 +142,8 @@ sap.ui.define([
                 console.error(err);
                 MessageToast.show("Delete failed");
             }
+            this.getView().getModel().refresh();
+
         }
     });
 });

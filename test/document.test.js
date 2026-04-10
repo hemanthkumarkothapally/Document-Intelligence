@@ -211,5 +211,48 @@ describe('Document Intelligence Service Tests', () => {
         expect(logs.status).to.equal(200);
         expect(logs.data.value.length).to.be.greaterThan(0);
     });
+    it('should mark document as FAILED when AI returns FAILED', async () => {
 
+  executeHttpRequest.mockResolvedValueOnce({
+    data: { id: "job-1", status: "PENDING" }
+  });
+
+  const upload = await POST('/odata/v4/document-intelligence/uploadDocument', {
+    fileName: "test.pdf",
+    rawText: Buffer.from("dummy").toString("base64")
+  });
+
+  const docId = upload.data.ID;
+
+  executeHttpRequest.mockResolvedValue({
+    data: { status: "FAILED" }
+  });
+
+  try {
+    await POST('/odata/v4/document-intelligence/processDocument', { documentId: docId });
+  } catch (err) {
+    expect(err.response.status).to.equal(500);
+  }
+});
+it('should handle unexpected errors', async () => {
+ executeHttpRequest.mockResolvedValueOnce({
+    data: { id: "job-1", status: "PENDING" }
+  });
+
+  const upload = await POST('/odata/v4/document-intelligence/uploadDocument', {
+    fileName: "test.pdf",
+    rawText: Buffer.from("dummy").toString("base64")
+  });
+
+  const docId = upload.data.ID;
+  executeHttpRequest.mockImplementation(() => {
+    throw new Error("Unexpected failure");
+  });
+
+  try {
+    await POST('/odata/v4/document-intelligence/processDocument', { documentId: docId });
+  } catch (err) {
+    expect(err.response.status).to.equal(500);
+  }
+});
 });

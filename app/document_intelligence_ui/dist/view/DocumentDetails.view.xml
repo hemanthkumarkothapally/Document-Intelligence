@@ -43,7 +43,7 @@
                             <!-- <Input value="{status}" /> -->
                             <Label text="Raw Text"></Label>
 
-                            <TextArea value="{rawText}" enabled="false" rows="5"/>
+                            <TextArea value="{= ${rawText}.trim()}" editable="false" rows="5"/>
                         </form:SimpleForm>
                     </uxap:ObjectPageSubSection>
                 </uxap:subSections>
@@ -111,15 +111,14 @@
                                         </HBox>
                                         <HBox>
                                             <Text text="{quantity}" visible="{= !${EditModel>/isEdit} }"/>
-                                            <Input value="{quantity}" visible="{= ${EditModel>/isEdit} }"/>
+                                            <Input value="{quantity}" change=".onlineItemChange" visible="{= ${EditModel>/isEdit} }"/>
                                         </HBox>
                                         <HBox>
                                             <Text text="{unitPrice}" visible="{= !${EditModel>/isEdit} }"/>
-                                            <Input value="{unitPrice}" visible="{= ${EditModel>/isEdit} }"/>
+                                            <Input value="{unitPrice}" change=".onlineItemChange" visible="{= ${EditModel>/isEdit} }"/>
                                         </HBox>
                                         <HBox >
-                                            <Text text="{lineTotal}" visible="{= !${EditModel>/isEdit} }"/>
-                                            <Input value="{lineTotal}" visible="{= ${EditModel>/isEdit} }"/>
+                                            <Text text="{lineTotal}" />
                                         </HBox>
                                     </cells>
                                 </ColumnListItem>
@@ -135,7 +134,7 @@
                 <uxap:subSections>
                     <uxap:ObjectPageSubSection>
 
-                        <Table items="{auditLogs}">
+                        <Table items="{path: 'auditLogs',sorter: {path: 'performedAt',descending: true}}">
                             <columns>
                                 <Column>
                                     <Text text="Action"/>

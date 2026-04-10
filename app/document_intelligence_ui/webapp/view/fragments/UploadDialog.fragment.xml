@@ -3,7 +3,7 @@
     xmlns:core="sap.ui.core">
     <Dialog title="Upload File to Extract Data">
         <content>
-            <unified:FileUploader valueState="None" id="idFileUploader" class="sapUiSmallMargin" fileType="pdf" name="myFileUpload" tooltip="Upload your file" change="onFileChange"></unified:FileUploader>
+            <unified:FileUploader valueState="None" id="idFileUploader" class="sapUiSmallMargin" fileType="pdf" name="myFileUpload" tooltip="Upload your file" change=".onFileChange"></unified:FileUploader>
         </content>
         <beginButton>
             <Button text="Cancel" press=".onCloseUploadDialogPress" />
@@ -11,7 +11,7 @@
         </beginButton>
 
         <endButton>
-            <Button text="Done" press="onFileUploadPress"/>
+            <Button text="Done" press=".onFileUploadPress"/>
 
         </endButton>
 

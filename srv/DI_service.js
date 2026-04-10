@@ -16,8 +16,6 @@ module.exports = cds.service.impl(function () {
       );
     req._oldData = oldData;
   });
-
-
   this.after('UPDATE', 'ExtractedInvoices', async (data, req) => {
     try {
       const oldData = req._oldData;
@@ -53,7 +51,10 @@ module.exports = cds.service.impl(function () {
         });
       }
     } catch (err) {
-      console.error("Invoice Audit Error:", err);
+      console.warn("Invoice Audit Error:", err.message);
+      await logAudit(data.document_ID || req.data.document_ID, "INVOICE_AUDIT_FAILED", req, {
+        error: err.message
+      });
     }
 
   });
@@ -94,7 +95,18 @@ module.exports = cds.service.impl(function () {
       });
 
     } catch (err) {
-      console.error("LineItem Audit Error:", err);
+      console.warn("LineItem Audit Error:", err.message);
+      let documentId = null;
+      if (data.invoice_ID) {
+        const invoice = await SELECT.one.from('com.cy.DIS.ExtractedInvoices')
+          .where({ ID: data.invoice_ID });
+        documentId = invoice?.document_ID;
+      }
+      if (documentId) {
+        await logAudit(documentId, "LINEITEM_AUDIT_FAILED", req, {
+          error: err.message
+        });
+      }
     }
 
   });
@@ -102,7 +114,7 @@ module.exports = cds.service.impl(function () {
     try {
       const { rawText, fileName } = req.data;
       if (!rawText || !fileName) {
-       return req.error(400, "File content or filename missing");
+        return req.error(400, "File content or filename missing");
       }
       const buffer = Buffer.from(rawText, 'base64');
       let extractedText;
@@ -117,7 +129,7 @@ module.exports = cds.service.impl(function () {
       await INSERT.into(Documents).entries({
         ID,
         fileName,
-        rawText: extractedText,
+        rawText: extractedText.trim(),
         status: 'PENDING',
         uploadedBy: req.user.id,
         uploadedAt: new Date()
@@ -208,7 +220,7 @@ module.exports = cds.service.impl(function () {
               .set({ status: "FAILED" })
               .where({ ID: documentId });
             await logAudit(documentId, "EXTRACTION_FAILED", req, "No data");
-            return req.error(500, "Invalid AI response");
+            throw req.error(500, "Invalid AI response");
           }
 
           const header = mapHeaderFields(extraction.headerFields);
@@ -249,7 +261,7 @@ module.exports = cds.service.impl(function () {
             items: lineItems.length
           });
 
-          return;
+          return await SELECT.one.from(ExtractedInvoices).where({ ID: invoiceId });
         }
 
         if (result.status === "FAILED") {
@@ -257,7 +269,7 @@ module.exports = cds.service.impl(function () {
             .set({ status: "FAILED" })
             .where({ ID: documentId });
           await logAudit(documentId, "PROCESS_FAILED", req, result);
-          req.error(500, "AI failed");
+          throw req.error(500, "AI failed");
         }
 
         await delay(3000);
@@ -283,7 +295,7 @@ module.exports = cds.service.impl(function () {
           : JSON.stringify(detailsObj)
       });
     } catch (err) {
-      console.error("Audit log failed:", err);
+      console.warn("Audit log failed:", err);
     }
   }
   function mapHeaderFields(headerFields) {

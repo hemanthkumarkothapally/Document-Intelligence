@@ -67,24 +67,9 @@ modules:
       build-result: resources
       requires:
         - artifacts:
-            - documentintelligence.zip
-          name: documentintelligence
-          target-path: resources/
-        - artifacts:
             - documentintelligenceui.zip
           name: documentintelligenceui
           target-path: resources/
-  - name: documentintelligence
-    type: html5
-    path: app/document_intelligence
-    build-parameters:
-      build-result: dist
-      builder: custom
-      commands:
-        - npm install
-        - npm run build:cf
-      supported-platforms:
-        []
   - name: documentintelligenceui
     type: html5
     path: app/document_intelligence_ui

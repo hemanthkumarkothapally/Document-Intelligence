@@ -1,8 +1,9 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "documentintelligenceui/controller/BaseController",
-
-], (Controller, BaseController) => {
+    "sap/m/MessageToast",
+        "sap/ui/model/json/JSONModel"
+], (Controller, BaseController,MessageToast,JSONModel) => {
     "use strict";
 
     return BaseController.extend("documentintelligenceui.controller.DocumentDetails", {
@@ -13,9 +14,12 @@ sap.ui.define([
             const sId = oEvent.getParameter("arguments").id;
             const oView = this.getView();
             oView.bindElement({
-                path: `/Documents(${sId})`
+                path: `/Documents(${sId})`,
+                parameters: {
+                    $$updateGroupId: "invoiceGroup"
+                }
             });
-            const oEditModel = new sap.ui.model.json.JSONModel({
+            const oEditModel = new JSONModel({
                 isEdit: false
             });
             this.getView().setModel(oEditModel, "EditModel");
@@ -30,17 +34,17 @@ sap.ui.define([
 
         onCancelEditPress: function () {
             this.getModel("EditModel").setProperty("/isEdit", false);
-            this.getView().getModel().refresh();
+            this.getView().getModel().resetChanges("invoiceGroup");
         },
 
         onSavePress: async function () {
             try {
-                await this.getView().getModel().submitBatch("$auto");
+                await this.getView().getModel().submitBatch("invoiceGroup");
                 this.getModel("EditModel").setProperty("/isEdit", false);
                 this.getModel().refresh();
-                sap.m.MessageToast.show("Saved");
+                MessageToast.show("Saved");
             } catch (e) {
-                sap.m.MessageToast.show("Error");
+                MessageToast.show("Error");
             }
         },
         formatAuditDetails: function (sDetails) {
@@ -74,90 +78,22 @@ sap.ui.define([
             } catch (e) {
                 return sDetails;
             }
+        },
+        onlineItemChange: function (oEvent) {
+            const oContext = oEvent.getSource().getBindingContext();
+            const oModel = oContext.getModel();
+            const sPath = oContext.getPath();
+
+            // ✅ safer
+            const oData = oContext.getObject();
+
+            const quantity = parseFloat(oData.quantity) || 0;
+            const unitPrice = parseFloat(oData.unitPrice) || 0;
+
+            const lineTotal = quantity * unitPrice;
+
+            // ✅ update using path
+            oContext.setProperty(sPath + "/lineTotal", lineTotal.toFixed(2));
         }
-        // onSavePress: async function () {
-
-        //     const oView = this.getView();
-        //     const oModel = this.getModel();
-
-        //     const newData = oView.getBindingContext().getObject();
-        //     const oldData = this._originalData;
-
-        //     const changes = [];
-        //     //INVOICE CHANGES
-        //     const invoiceFields = [
-        //         "invoiceNumber",
-        //         "vendorName",
-        //         "invoiceDate",
-        //         "totalAmount",
-        //         "currency"
-        //     ];
-
-        //     invoiceFields.forEach(field => {
-        //         if (oldData.invoice?.[field] !== newData.invoice?.[field]) {
-        //             changes.push({
-        //                 entity: "Invoice",
-        //                 type: "UPDATED",
-        //                 field,
-        //                 old: oldData.invoice?.[field],
-        //                 new: newData.invoice?.[field]
-        //             });
-        //         }
-        //     });
-        //     //LINE ITEMS CHANGES
-        //     const oldItems = oldData.invoice?.lineItems || [];
-        //     const newItems = newData.invoice?.lineItems || [];
-        //     const oldMap = new Map(oldItems.map(i => [i.ID, i]));
-        //     const newMap = new Map(newItems.map(i => [i.ID, i]));
-
-        //     // 🔹 UPDATED
-        //     newItems.forEach(item => {
-        //         const oldItem = oldMap.get(item.ID);
-
-        //         if (oldItem) {
-        //             ["description", "quantity", "unitPrice", "lineTotal"].forEach(field => {
-        //                 if (oldItem[field] !== item[field]) {
-        //                     changes.push({
-        //                         entity: "LineItem",
-        //                         type: "UPDATED",
-        //                         field,
-        //                         old: oldItem[field],
-        //                         new: item[field]
-        //                     });
-        //                 }
-        //             });
-        //         }
-        //     });
-        //     try {
-        //         await oModel.submitBatch("$auto");
-        //         if (changes.length > 0) {
-        //             const payload = {
-        //                 document_ID: newData.ID,
-        //                 action: "UPDATED",
-        //                 performedBy: "user",
-        //                 performedAt: new Date(),
-        //                 details: JSON.stringify({
-        //                     entity: "Invoice + LineItems",
-        //                     changes
-        //                 })
-        //             };
-
-        //             const oBinding = oModel.bindList("/AuditLogs");
-        //             await oBinding.create(payload);
-        //         }
-
-        //         // ==========================
-        //         // 🔄 RESET UI
-        //         // ==========================
-        //         oView.getModel("ui").setProperty("/isEdit", false);
-        //         oModel.refresh();
-
-        //         sap.m.MessageToast.show("Saved with audit log");
-
-        //     } catch (err) {
-        //         console.error(err);
-        //         sap.m.MessageToast.show("Save failed");
-        //     }
-        // }
     });
 });

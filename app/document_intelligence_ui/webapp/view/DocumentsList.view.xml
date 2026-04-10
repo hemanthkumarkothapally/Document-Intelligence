@@ -7,17 +7,19 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
     <f:DynamicPage>
-        <f:title />
+        <f:title>
+            <f:DynamicPageTitle >
+                <f:heading>
+                    <Title text="Document Intelligence"></Title>
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
         <f:header>
             <f:DynamicPageHeader>
                 <f:content>
                     <filterbar:FilterBar id="idFilterBar" useToolbar="false" search=".onGoBtnPress">
                         <filterbar:filterGroupItems>
-                            <filterbar:FilterGroupItem label="{i18n>id}" name="ID" groupName="group1" visibleInFilterBar="true">
-                                <filterbar:control>
-                                    <Input placeholder="Enter ID"/>
-                                </filterbar:control>
-                            </filterbar:FilterGroupItem>
+
                             <filterbar:FilterGroupItem label="{i18n>fileName}" name="fileName" groupName="group1" visibleInFilterBar="true">
 
                                 <filterbar:control>
@@ -32,9 +34,9 @@
                             <filterbar:FilterGroupItem label="{i18n>status}" name="status" groupName="group1" visibleInFilterBar="true">
                                 <filterbar:control>
                                     <ComboBox>
-                                        <core:Item key="Pending" text="Pending"/>
-                                        <core:Item key="Done" text="Done"/>
-                                        <core:Item key="Failed" text="Failed"/>
+                                        <core:Item key="PENDING" text="Pending"/>
+                                        <core:Item key="DONE" text="Done"/>
+                                        <core:Item key="FAILED" text="Failed"/>
                                     </ComboBox>
                                 </filterbar:control>
                             </filterbar:FilterGroupItem>
@@ -45,7 +47,7 @@
         </f:header>
         <f:content>
 
-            <Table id="documentsTable" items="{/Documents}" growing="true" mode="MultiSelect" selectionChange=".onDocumentsSelectChange" growingThreshold="10">
+            <Table id="documentsTable" items="{path: '/Documents',sorter: {path: 'uploadedAt',descending: true}}" growing="true" mode="MultiSelect" selectionChange=".onDocumentsSelectChange" growingThreshold="10">
                 <headerToolbar>
                     <tnt:ToolHeader>
                         <Title text="Documents ({= ${/Documents/$count}})" />
@@ -70,7 +72,7 @@
                         <Text text="{i18n>uploadedAt}"/>
                     </Column>
 
-                    <Column>
+                    <Column width="6rem">
                         <Text text="{i18n>status}"/>
                     </Column>
 
@@ -87,8 +89,8 @@
                             <Text text="{fileName}"/>
                             <Text text="{uploadedBy}"/>
                             <Text text="{uploadedAt}"/>
-                            <ObjectStatus text="{status}"/>
-                            <Text text="{rawText}" wrapping="false"/>
+                            <ObjectStatus text="{status}" inverted="true" state="{= ${status} === 'PENDING'? 'Warning' : ${status} === 'DONE'? 'Success' : 'Error'}"/>
+                            <Text text="{= ${rawText}.trim()}" wrapping="false"/>
                         </cells>
 
                     </ColumnListItem>
