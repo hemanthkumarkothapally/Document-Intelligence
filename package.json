@@ -13,13 +13,16 @@
     "pdf-parse": "^1.1.1"
   },
   "devDependencies": {
+    "@cap-js/cds-test": "^0.4.1",
     "@cap-js/sqlite": "^2",
-    "@sap/cds-dk": "^9",
+    "@sap/cds-dk": "^9.8.3",
     "cds-plugin-ui5": "^0.13.0",
+    "jest": "^30.3.0",
     "mbt": "^1.2.29",
     "rimraf": "^5.0.5"
   },
   "scripts": {
+    "test": "jest",
     "start": "cds-serve",
     "watch-documentintelligence": "cds watch --open documentintelligence/index.html?sap-ui-xx-viewCache=false --livereload false",
     "undeploy": "cf undeploy DocumentIntelligenceService --delete-services --delete-service-keys --delete-service-brokers",

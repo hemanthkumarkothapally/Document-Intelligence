@@ -102,7 +102,7 @@ module.exports = cds.service.impl(function () {
     try {
       const { rawText, fileName } = req.data;
       if (!rawText || !fileName) {
-        req.error(400, "File content or filename missing");
+       return req.error(400, "File content or filename missing");
       }
       const buffer = Buffer.from(rawText, 'base64');
       let extractedText;
@@ -146,14 +146,14 @@ module.exports = cds.service.impl(function () {
         );
       } catch (err) {
         await logAudit(ID, "UPLOAD_FAILED", req, err.message);
-        req.error(500, "Document AI upload failed");
+        return req.error(500, "Document AI upload failed");
       }
       console.log("uploadResponse", uploadResponse?.data?.id)
       const jobId = uploadResponse?.data?.id;
 
       if (!jobId) {
         await logAudit(ID, "UPLOAD_FAILED", req, "No Job ID");
-        req.error(500, "Invalid response from Document AI");
+        return req.error(500, "Invalid response from Document AI");
       }
       console.log("Job Created:", jobId);
       await UPDATE(Documents)
@@ -169,7 +169,7 @@ module.exports = cds.service.impl(function () {
         .set({ status: "FAILED" })
         .where({ ID });
       await logAudit(ID, "UPLOAD_FAILED", req, err.message);
-      return req.error(500, "Document AI upload failed");
+      return req.error(500, "Document upload failed");
     }
   });
 
@@ -267,7 +267,7 @@ module.exports = cds.service.impl(function () {
       return { message: "Still processing" };
     } catch (error) {
       await logAudit(documentId, "PROCESS_ERROR", req, error.message);
-      req.error(500, error.message);
+      return req.error(500, error.message);
     }
 
   });
