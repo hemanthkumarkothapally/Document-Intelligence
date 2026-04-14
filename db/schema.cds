@@ -10,12 +10,8 @@ type Status : String enum {
     DONE;
     FAILED;
 }
-
-// @changelog
 entity Documents : cuid, managed {
-    // content   : LargeBinary;
-    //     @Core.MediaType: 'application/pdf'
-    //     @Core.ContentDisposition.Filename: fileName;
+
     jobId      : String(100);
     rawText    : LargeString @mandatory;
     fileName   : String(255) @mandatory;
