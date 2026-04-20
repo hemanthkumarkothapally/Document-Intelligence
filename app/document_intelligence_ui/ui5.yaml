@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
-
 specVersion: "4.0"
 metadata:
   name: documentintelligenceui
@@ -21,3 +19,16 @@ server:
         port: 35729
         path: webapp
         delay: 300
+builder:
+  resources:
+    excludes:
+      - "/test/**"
+
+  bundles:
+    - bundleDefinition:
+        name: documentintelligenceui/Component-preload.js
+        defaultFileTypes: [.js, .xml, .json, .properties]
+        sections:
+          - mode: preload
+            filters:
+              - documentintelligenceui/**

@@ -6,9 +6,8 @@ sap.ui.define([
     'sap/ui/model/FilterOperator',
     "sap/ui/core/BusyIndicator",
     'sap/m/MessageToast',
-    "sap/ui/model/json/JSONModel",
-    "sap/ui/model/Filter"
-], (Controller, Fragment, BaseController, Filter, FilterOperator, BusyIndicator, MessageToast,JSONModel,Filter) => {
+    "sap/ui/model/json/JSONModel"
+], (Controller, Fragment, BaseController, Filter, FilterOperator, BusyIndicator, MessageToast,JSONModel) => {
     "use strict";
 
     return BaseController.extend("documentintelligenceui.controller.DocumentsList", {
